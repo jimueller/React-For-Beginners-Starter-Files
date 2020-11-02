@@ -8,7 +8,11 @@ class Order extends Component {
     const isAvailable = fish && fish.status === "available";
 
     if (!isAvailable) {
-      return <li>Sorry {fish ? fish.name : "fish"} is no longer available</li>;
+      return (
+        <li key={fishId}>
+          Sorry {fish ? fish.name : "fish"} is no longer available
+        </li>
+      );
     }
     return (
       <li key={fishId}>
