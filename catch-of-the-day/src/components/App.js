@@ -20,6 +20,15 @@ class App extends Component {
     this.setState({ fishes });
   };
 
+  addToOrder = (key) => {
+    const order = { ...this.state.order };
+    // add or update order
+    order[key] = order[key] + 1 || 1;
+    console.log(order);
+
+    this.setState({ order });
+  };
+
   loadSampleFishes = () => {
     this.setState({ fishes: sampleFishes });
   };
@@ -31,7 +40,12 @@ class App extends Component {
           <Header tagline="Jim is cool" />
           <ul className="fishes">
             {Object.keys(this.state.fishes).map((key) => (
-              <Fish key={key} fish={this.state.fishes[key]} />
+              <Fish
+                key={key}
+                fishId={key}
+                fish={this.state.fishes[key]}
+                addToOrder={this.addToOrder}
+              />
             ))}
           </ul>
         </div>
