@@ -22,10 +22,7 @@ class App extends Component {
 
   addToOrder = (key) => {
     const order = { ...this.state.order };
-    // add or update order
     order[key] = order[key] + 1 || 1;
-    console.log(order);
-
     this.setState({ order });
   };
 
