@@ -20,12 +20,12 @@ class App extends Component {
     const order = localStorage.getItem(params.storeId);
 
     const restoreOrderFromLocalStorage = () => {
-      const callbackOrder = localStorage.getItem(params.storeId);
       if (order) {
         this.setState({ order: JSON.parse(order) });
       }
     };
 
+    // keep this handle so we can unbind it on unmount
     this.dbRef = base.syncState(`${params.storeId}/fishes`, {
       context: this,
       state: "fishes",
@@ -50,6 +50,12 @@ class App extends Component {
     // 2. add new fish
     fishes[`fish${Date.now()}`] = fish;
     // 3. set the new fishes object in state
+    this.setState({ fishes });
+  };
+
+  updateFish = (fishId, fish) => {
+    const fishes = { ...this.state.fishes };
+    fishes[fishId] = fish;
     this.setState({ fishes });
   };
 
@@ -82,7 +88,9 @@ class App extends Component {
         <Order fishes={this.state.fishes} order={this.state.order} />
         <Inventory
           addFish={this.addFish}
+          updateFish={this.updateFish}
           loadSampleFishes={this.loadSampleFishes}
+          fishes={this.state.fishes}
         />
       </div>
     );
