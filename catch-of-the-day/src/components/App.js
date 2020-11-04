@@ -4,12 +4,45 @@ import Order from "./Order";
 import Inventory from "./Inventory";
 import sampleFishes from "../sample-fishes";
 import Fish from "./Fish";
+import base from "../base";
 
 class App extends Component {
   state = {
     fishes: {},
     order: {},
   };
+
+  componentDidMount() {
+    const { params } = this.props.match;
+
+    // Save a copy of order from localStorage, otherwise will be set
+    // to nothing when componentDidUpdate fires after syncState
+    const order = localStorage.getItem(params.storeId);
+
+    const restoreOrderFromLocalStorage = () => {
+      const callbackOrder = localStorage.getItem(params.storeId);
+      if (order) {
+        this.setState({ order: JSON.parse(order) });
+      }
+    };
+
+    this.dbRef = base.syncState(`${params.storeId}/fishes`, {
+      context: this,
+      state: "fishes",
+      then: restoreOrderFromLocalStorage,
+    });
+  }
+
+  componentDidUpdate() {
+    localStorage.setItem(
+      this.props.match.params.storeId,
+      JSON.stringify(this.state.order)
+    );
+  }
+
+  componentWillUnmount() {
+    base.removeBinding(this.dbRef);
+  }
 
   addFish = (fish) => {
     // 1. take a copy of the existing state (never mutate state)
