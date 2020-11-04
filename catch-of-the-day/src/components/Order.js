@@ -5,12 +5,8 @@ class Order extends Component {
   renderOrderItems = (fishId) => {
     const fish = this.props.fishes[fishId];
 
-    // avoid flash of unresolved fish on page reload
-    // order state is retrieved from localstate (quickly)
-    // but fish data is fetch from firebase, so order details will
-    // be present before fish details, resulting in a flash of missing fish
-    // this prevents that, but still seems like a moderate hack
-    //if (!fish) return null;
+    // If fish was deleted, don't render anything
+    if (!fish) return null;
 
     const quantity = this.props.order[fishId];
     const isAvailable = fish && fish.status === "available";
@@ -26,6 +22,7 @@ class Order extends Component {
       <li key={fishId}>
         {quantity} lbs {fish.name}
         {formatPrice(quantity * fish.price)}
+        <button onClick={() => this.props.removeFromOrder(fishId)}>X</button>
       </li>
     );
   };
