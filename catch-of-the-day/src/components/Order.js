@@ -1,9 +1,18 @@
 import React, { Component } from "react";
+import { TransitionGroup, CSSTransition } from "react-transition-group";
 import { formatPrice } from "../helpers";
 
 class Order extends Component {
   renderOrderItems = (fishId) => {
     const fish = this.props.fishes[fishId];
+    const transitionOptions = {
+      classNames: "order",
+      key: fishId,
+      timeout: {
+        enter: 250,
+        exit: 250,
+      },
+    };
 
     // If fish was deleted, don't render anything
     if (!fish) return null;
@@ -13,17 +22,34 @@ class Order extends Component {
 
     if (!isAvailable) {
       return (
-        <li key={fishId}>
-          Sorry {fish ? fish.name : "fish"} is no longer available
-        </li>
+        <CSSTransition {...transitionOptions}>
+          <li key={fishId}>
+            Sorry {fish ? fish.name : "fish"} is no longer available
+          </li>
+        </CSSTransition>
       );
     }
     return (
-      <li key={fishId}>
-        {quantity} lbs {fish.name}
-        {formatPrice(quantity * fish.price)}
-        <button onClick={() => this.props.removeFromOrder(fishId)}>X</button>
-      </li>
+      <CSSTransition {...transitionOptions}>
+        <li key={fishId}>
+          <span>
+            <TransitionGroup component="span" className="count">
+              <CSSTransition
+                classNames={"count"}
+                key={quantity}
+                timeout={{ enter: 250, exit: 250 }}
+              >
+                <span>{quantity}</span>
+              </CSSTransition>
+            </TransitionGroup>
+            lbs {fish.name}
+            <span class="price">{formatPrice(quantity * fish.price)}</span>
+            <button onClick={() => this.props.removeFromOrder(fishId)}>
+              &times;
+            </button>
+          </span>
+        </li>
+      </CSSTransition>
     );
   };
 
@@ -45,7 +71,9 @@ class Order extends Component {
     return (
       <div className="order-wrap">
         <h2>Order</h2>
-        <ul className="order">{orderIds.map(this.renderOrderItems)}</ul>
+        <TransitionGroup component="ul" className="order">
+          {orderIds.map(this.renderOrderItems)}
+        </TransitionGroup>
         <div className="total">
           Total:<strong>{formatPrice(total)}</strong>
         </div>
