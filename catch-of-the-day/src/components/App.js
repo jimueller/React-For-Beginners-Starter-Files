@@ -84,7 +84,7 @@ class App extends Component {
     return (
       <div className="catch-of-the-day">
         <div className="menu">
-          <Header tagline="Jim is cool" />
+          <Header tagline="Eh, it's just fish" />
           <ul className="fishes">
             {Object.keys(this.state.fishes).map((key) => (
               <Fish
